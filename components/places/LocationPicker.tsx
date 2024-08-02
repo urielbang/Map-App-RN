@@ -1,5 +1,5 @@
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OutlineButton from "../UI/OutlineButton";
 import { Colors } from "../../constants/colors";
 import {
@@ -8,20 +8,36 @@ import {
   PermissionStatus,
 } from "expo-location";
 import { getMapPreview } from "../../utils/locations";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from "@react-navigation/native";
 
 export default function LocationPicker() {
-  const navigation = useNavigation();
   const [pickedLocation, setPickedLocation] = useState(null);
+  const isFocused = useIsFocused();
+
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const [locationPremission, requestPremission] = useForegroundPermissions();
+
+  useEffect(() => {
+    if (route.params && isFocused) {
+      const mapPickedLocation = {
+        lat: route.params.pickedLat,
+        lng: route.params.pickedLng,
+      };
+      setPickedLocation(mapPickedLocation);
+    }
+  }, [route, isFocused]);
 
   async function verifyPermission() {
     if (locationPremission.status === PermissionStatus.UNDETERMINED) {
       const permissionResponse = await requestPremission();
       return permissionResponse.granted;
     }
-
     if (locationPremission.status === PermissionStatus.DENIED) {
       Alert.alert(
         "Insufficient Permissions!",
@@ -29,19 +45,15 @@ export default function LocationPicker() {
       );
       return false;
     }
-
     return true;
   }
 
   async function getLocationHandler() {
     const hasPremission = await verifyPermission();
-
     if (!hasPremission) {
       return;
     }
-
     const location = await getCurrentPositionAsync();
-
     setPickedLocation({
       lat: location.coords.latitude,
       lng: location.coords.longitude,
@@ -54,17 +66,14 @@ export default function LocationPicker() {
       <Image
         style={styles.image}
         source={{
-          uri: getMapPreview(pickedLocation.lat, pickedLocation.lng),
+          uri: getMapPreview(pickedLocation?.lat, pickedLocation?.lng),
         }}
       />
     );
   }
 
   function pickOnMapHandler() {
-    navigation.navigate("Map", {
-      lat: pickedLocation.lat,
-      lng: pickedLocation.lng,
-    });
+    navigation.navigate("Map");
   }
   return (
     <View>

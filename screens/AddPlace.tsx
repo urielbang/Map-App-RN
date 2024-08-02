@@ -1,8 +1,11 @@
 import { StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PlaceForm from "../components/places/PlaceForm";
+import { useNavigation } from "@react-navigation/native";
 
-export default function AddPlace() {
+export default function AddPlace({ route }) {
+  const navigation = useNavigation();
+
   return <PlaceForm />;
 }
 
