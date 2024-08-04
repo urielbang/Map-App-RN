@@ -8,7 +8,7 @@ import {
 import { Colors } from "../../constants/colors";
 import OutlineButton from "../UI/OutlineButton";
 
-export default function ImagePicker() {
+export default function ImagePicker({ onImageTaken }) {
   const [pickedImage, setPickedImage] = useState("");
   const [cameraPermissionInfo, requestPermission] = useCameraPermissions();
 
@@ -40,6 +40,7 @@ export default function ImagePicker() {
       quality: 0.5,
     });
 
+    onImageTaken(image.assets[0].uri);
     setPickedImage(image.assets[0].uri);
   }
 
