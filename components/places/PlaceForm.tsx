@@ -4,8 +4,9 @@ import { Colors } from "../../constants/colors";
 import ImagePicker from "./ImagePicker";
 import LocationPicker from "./LocationPicker";
 import Button from "../UI/Button";
+import { Place } from "../../models/place";
 
-export default function PlaceForm() {
+export default function PlaceForm({ createPlaceHandler }) {
   const [title, setTitle] = useState("");
   const [pickedLocation, setPickedLocation] = useState("");
   const [selectImage, setSelectImage] = useState("");
@@ -23,9 +24,8 @@ export default function PlaceForm() {
   }, []);
 
   const savePlaceHandler = () => {
-    console.log(title);
-    console.log(pickedLocation);
-    console.log(selectImage);
+    const placeData = new Place(title, selectImage, pickedLocation);
+    createPlaceHandler(placeData);
   };
 
   return (
