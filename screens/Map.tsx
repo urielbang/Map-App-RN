@@ -22,7 +22,7 @@ export default function Map() {
 
   const savePickedLocationHandler = useCallback(() => {
     if (!selectedLocation) {
-      Alert.alert("No location pick", "you have to pick location");
+      Alert.alert("No location pick", "You have to pick a location");
       return;
     }
     navigation.navigate("AddPlace", {
@@ -50,13 +50,15 @@ export default function Map() {
       initialRegion={region}
       onPress={selectLocationHandler}
     >
-      <Marker
-        title="Picked location"
-        coordinate={{
-          latitude: selectedLocation?.lat,
-          longitude: selectedLocation?.lng,
-        }}
-      />
+      {selectedLocation && (
+        <Marker
+          title="Picked location"
+          coordinate={{
+            latitude: selectedLocation.lat,
+            longitude: selectedLocation.lng,
+          }}
+        />
+      )}
     </MapView>
   );
 }

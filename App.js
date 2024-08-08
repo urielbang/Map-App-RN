@@ -6,9 +6,36 @@ import AddPlace from "./screens/AddPlace";
 import IconButton from "./components/UI/IconButton";
 import { Colors } from "./constants/colors";
 import Map from "./screens/Map";
+import { useEffect, useState } from "react";
+import { init } from "./utils/database";
+import { Alert, Text, View } from "react-native";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
+  const [dbInitialized, setDbInitialized] = useState(false);
+
+  useEffect(() => {
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        Alert.alert("error!");
+        console.log(err);
+      })
+      .finally(() => {
+        setDbInitialized(false);
+      });
+  }, []);
+
+  if (!dbInitialized) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
   return (
     <>
       <StatusBar style="dark" />
